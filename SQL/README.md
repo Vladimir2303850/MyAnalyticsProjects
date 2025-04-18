@@ -12,7 +12,7 @@
 - Математические вычисления  
 - Логические операторы (BETWEEN, IN, LIKE)  
 
-[Код практики](./SQL/sql_practice_1.sql)
+[Код практики](./sql_practice_1.sql)
 
 ---
 
@@ -23,7 +23,7 @@
 - MIN/MAX с фильтрацией  
 - Финансовые расчёты (НДС)  
 
-[Код практики](./SQL/sql_aggregates_practice.sql)
+[Код практики](./sql_aggregates_practice.sql)
 
 ---
 
@@ -34,5 +34,5 @@
 - Операторы ANY/ALL  
 - Решение задач инвентаризации  
 
-[Код практики](./SQL/sql_subqueries_practice.sql)
+[Код практики](./sql_subqueries_practice.sql)
 
