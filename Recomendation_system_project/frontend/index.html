@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Система рекомендаций фильмов</title>
+    <style>
+        body {
+            font-family: "Segoe UI", sans-serif;
+            background-color: #f4f5f9;
+            color: #222;
+            margin: 0;
+            padding: 40px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 1200px;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 30px 40px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #111;
+        }
+
+        .login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+
+        input {
+            padding: 8px 14px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            color: white;
+            background-color: #007bff;
+            transition: 0.2s;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .column {
+            background: #fafafa;
+            border-radius: 12px;
+            padding: 20px 25px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .column h2 {
+            text-align: center;
+            margin-bottom: 16px;
+            color: #333;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #eee;
+            font-size: 15px;
+        }
+
+        .buttons {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .buttons button {
+            margin: 0 5px;
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎬 Система рекомендаций фильмов</h1>
+
+        <div class="login-section">
+            <label>Имя пользователя:</label>
+            <input type="text" id="username" placeholder="Введите имя..." />
+            <button onclick="login()">Войти</button>
+        </div>
+
+        <div class="buttons">
+            <button onclick="getMovies()">📋 Показать все фильмы</button>
+            <button onclick="getRecommendations()">⭐ Рекомендации для вас</button>
+        </div>
+
+        <div class="main-content">
+            <div class="column">
+                <h2>Фильмы</h2>
+                <ul id="movies-list"></ul>
+            </div>
+
+            <div class="column">
+                <h2>Рекомендации</h2>
+                <ul id="recommendations-list"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentUser = null;
+
+        async function login() {
+            const username = document.getElementById("username").value;
+            if (!username) return alert("Введите имя пользователя");
+
+            const res = await fetch("http://127.0.0.1:8000/users");
+            const users = await res.json();
+            const user = users.find(u => u.username === username);
+
+            if (!user) {
+                alert("Ошибка входа в систему");
+                return;
+            }
+
+            currentUser = user;
+            alert("Добро пожаловать, " + username + "!");
+        }
+
+        async function getMovies() {
+            const res = await fetch("http://127.0.0.1:8000/movies");
+            const movies = await res.json();
+
+            const list = document.getElementById("movies-list");
+            list.innerHTML = "";
+            movies.forEach(m => {
+                const li = document.createElement("li");
+                li.textContent = `${m.title} (${m.year}) — ${m.genre}`;
+                list.appendChild(li);
+            });
+        }
+
+        async function getRecommendations() {
+            if (!currentUser) return alert("Сначала войдите в систему");
+
+            const res = await fetch(`http://127.0.0.1:8000/recommendations/${currentUser.user_id}`);
+            const recs = await res.json();
+
+            const list = document.getElementById("recommendations-list");
+            list.innerHTML = "";
+            if (recs.length === 0) {
+                list.innerHTML = "<li>Пока нет рекомендаций</li>";
+            } else {
+                recs.forEach(r => {
+                    const li = document.createElement("li");
+                    li.textContent = `${r.title} (${r.year}) — ${r.genre}`;
+                    list.appendChild(li);
+                });
+            }
+        }
+    </script>
+</body>
+</html>
